@@ -17,15 +17,14 @@ namespace MapReduce
 
             // Map
             var mappedResult = Map(lines, GetWords);
-            Console.WriteLine("Map result: Word count = {0}", mappedResult.Count());
+            PrintMapResult(mappedResult);
             Console.ReadLine();
 
             // Reduce
             var result = Reduce(mappedResult, GetWordCount("Lorem"));
-            Console.WriteLine("Reduce result: Lorem found {0} times", result);
+            PrintReduceResult(result);
             Console.ReadLine();
         }
-
 
         #region Map
 
@@ -60,6 +59,16 @@ namespace MapReduce
             return words.Select(token => new ResultItem(token, 1));
         }
 
+        private static void PrintMapResult(IEnumerable<ResultItem> mappedResult)
+        {
+            Console.WriteLine("Map result: Word count = {0}", mappedResult.Count());
+            foreach (var resultItem in mappedResult.Take(10))
+            {
+                Console.WriteLine("{0} = {1}", resultItem.Word, resultItem.Value);
+            }
+            Console.WriteLine("...");
+        }
+
         #endregion
 
         #region Reduce
@@ -72,6 +81,11 @@ namespace MapReduce
         private static Func<ResultItem, int> GetWordCount(string word)
         {
             return x => string.Compare(x.Word, word) == 0 ? x.Value : 0;
+        }
+
+        private static void PrintReduceResult(int result)
+        {
+            Console.WriteLine("Reduce result: Lorem found {0} times", result);
         }
 
         #endregion
